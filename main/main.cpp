@@ -4,60 +4,66 @@
  * SPDX-License-Identifier: CC0-1.0
  */
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+// #ifdef __cplusplus
+// extern "C"
+// {
+// #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <inttypes.h>
+
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_chip_info.h"
-#include "esp_flash.h"
-#include "esp_system.h"
+#include "freertos/queue.h"
+#include "driver/gpio.h"
 
-    extern "C" void app_main(void)
+#define GPIO_OUTPUT_IO_0 GPIO_NUM_4
+#define GPIO_OUTPUT_IO_1 GPIO_NUM_5
+
+/*
+ * Let's say, GPIO_OUTPUT_IO_0=18, GPIO_OUTPUT_IO_1=19
+ * In binary representation,
+ * 1ULL<<GPIO_OUTPUT_IO_0 is equal to 0000000000000000000001000000000000000000 and
+ * 1ULL<<GPIO_OUTPUT_IO_1 is equal to 0000000000000000000010000000000000000000
+ * GPIO_OUTPUT_PIN_SEL                0000000000000000000011000000000000000000
+ * */
+#define GPIO_OUTPUT_PIN_SEL ((1ULL << GPIO_OUTPUT_IO_0) | (1ULL << GPIO_OUTPUT_IO_1))
+
+extern "C" void app_main(void)
+{
+    printf("Fuckin' right bud!\n");
+
+    // Configure GPIO pins
+    gpio_config_t io_conf = {};
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+    auto err = gpio_config(&io_conf);
+    if (err != ESP_OK)
     {
-        printf("Fuckin' right bud!\n");
-
-        /* Print chip information */
-        esp_chip_info_t chip_info;
-        uint32_t flash_size;
-        esp_chip_info(&chip_info);
-        printf("This is %s chip with %d CPU core(s), %s%s%s%s, ",
-               CONFIG_IDF_TARGET,
-               chip_info.cores,
-               (chip_info.features & CHIP_FEATURE_WIFI_BGN) ? "WiFi/" : "",
-               (chip_info.features & CHIP_FEATURE_BT) ? "BT" : "",
-               (chip_info.features & CHIP_FEATURE_BLE) ? "BLE" : "",
-               (chip_info.features & CHIP_FEATURE_IEEE802154) ? ", 802.15.4 (Zigbee/Thread)" : "");
-
-        unsigned major_rev = chip_info.revision / 100;
-        unsigned minor_rev = chip_info.revision % 100;
-        printf("silicon revision v%d.%d, ", major_rev, minor_rev);
-        if (esp_flash_get_size(NULL, &flash_size) != ESP_OK)
-        {
-            printf("Get flash size failed");
-            return;
-        }
-
-        printf("%" PRIu32 "MB %s flash\n", flash_size / (uint32_t)(1024 * 1024),
-               (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
-
-        printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
-
-        for (int i = 10; i >= 0; i--)
-        {
-            printf("Restarting in %d seconds...\n", i);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-        }
-        printf("Restarting now.\n");
-        fflush(stdout);
-        esp_restart();
+        printf("error setting gpio config: %s\n", esp_err_to_name(err));
     }
 
-#ifdef __cplusplus
+    //
+    fflush(stdout);
+
+    while (true)
+    {
+        gpio_set_level(GPIO_NUM_4, 1);
+        vTaskDelay(150 / portTICK_PERIOD_MS);
+        gpio_set_level(GPIO_NUM_4, 0);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+
+    // printf("Restarting now.\n");
+    fflush(stdout);
+    esp_restart();
 }
-#endif
+
+// #ifdef __cplusplus
+// }
+// #endif
