@@ -2,21 +2,24 @@
 
 # See https://docs.espressif.com/projects/esp-idf/en/v5.2.3/esp32s3/get-started/linux-macos-setup.html
 
-sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
+sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0 openocd
 
-mkdir -p ~/esp
-cd ~/esp
+echo "Hey! You may need to reboot your computer at this point."
 
-if [ ! -d "~/esp/esp-idf" ]; then
-    git clone -b v5.2.3 --recursive https://github.com/espressif/esp-idf.git
-fi
+# Setup ESP-IDF through the official VSCode extension. Make sure paths are VALID, i.e. don't mix "/home/tiger/..." and "/home/vscode/..."
+# mkdir -p ~/esp
+# cd ~/esp
 
-cd ~/esp/esp-idf
+# if [ ! -d "~/esp/esp-idf" ]; then
+#     git clone -b v5.2.3 --recursive https://github.com/espressif/esp-idf.git
+# fi
 
-# You may need to specify a different target here depending on your chip.
-# See https://docs.espressif.com/projects/esp-idf/en/v5.2.3/esp32s3/get-started/linux-macos-setup.html#step-3-set-up-the-tools
-./install.sh esp32s3
-. ./export.sh
+# cd ~/esp/esp-idf
 
-# echo "export IDF_TARGET=\"$HOME/esp/esp-idf\"" >> ~/.bashrc
-# echo "export IDF_TOOLS_PATH=\"$HOME/esp/esp-idf/tools\"" >> ~/.bashrc
+# # You may need to specify a different target here depending on your chip.
+# # See https://docs.espressif.com/projects/esp-idf/en/v5.2.3/esp32s3/get-started/linux-macos-setup.html#step-3-set-up-the-tools
+# ./install.sh esp32s3
+# . ./export.sh
+
+# # echo "export IDF_TARGET=\"$HOME/esp/esp-idf\"" >> ~/.bashrc
+# # echo "export IDF_TOOLS_PATH=\"$HOME/esp/esp-idf/tools\"" >> ~/.bashrc
