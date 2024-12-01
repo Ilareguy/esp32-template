@@ -4,5 +4,18 @@
     "idf.openOcdConfigs": [
         "board/esp32s3-builtin.cfg"
     ],
-    "idf.port": "/dev/ttyACM0"
+    "idf.port": "/dev/ttyACM0",
+    "files.associations": {
+        "*.rs": "rust",
+        "inttypes.h": "c",
+        "stdio.h": "c",
+        "esp_flash.h": "c",
+        "spi_flash_types.h": "c",
+        "freertos.h": "c",
+        "freertosconfig.h": "c",
+        "freertosconfig_arch.h": "c",
+        "portable.h": "c",
+        "esp_mac.h": "c",
+        "sdkconfig.h": "c"
+    }
 }
